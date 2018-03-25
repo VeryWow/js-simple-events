@@ -1,4 +1,6 @@
-import { EventHandlers } from './types'
+export interface EventHandlers {
+  [key: string]: Map<Function, boolean>
+}
 
 export default class EventManagment {
   private eventHandlersMap: EventHandlers = {}
