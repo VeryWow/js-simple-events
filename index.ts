@@ -13,17 +13,17 @@ export default class EventManagment {
     }
   }
 
-  on(eventName: string, callback: Function): boolean {
+  public on(eventName: string, callback: Function): boolean {
     this.addEventHandler(eventName, callback)
     return true;
   }
 
-  once(eventName: string, callback: Function): boolean {
+  public once(eventName: string, callback: Function): boolean {
     this.addEventHandler(eventName, callback, true)
     return true;
   }
 
-  off(eventName: string, callback: Function): boolean {
+  public off(eventName: string, callback: Function): boolean {
     if (!this.eventHandlersMap[eventName]) {
       return true;
     }
@@ -35,7 +35,7 @@ export default class EventManagment {
     return true;
   }
 
-  emit(eventName: string, ...args): void {
+  public emit(eventName: string, ...args): void {
     if (this.eventHandlersMap[eventName]) {
       this.eventHandlersMap[eventName].forEach((value: boolean, handler: Function) => {
         handler && handler(...args);
@@ -47,12 +47,12 @@ export default class EventManagment {
   }
 
   /// Aliases:
-  fire = this.emit
+  public fire = this.emit
 
-  listen = this.on
-  subscribe = this.on
+  public listen = this.on
+  public subscribe = this.on
 
-  remove = this.off
-  unsubscribe = this.off
+  public remove = this.off
+  public unsubscribe = this.off
   ///
 }
