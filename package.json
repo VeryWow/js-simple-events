@@ -1,6 +1,6 @@
 {
   "name": "js-simple-events",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Yet another simple event management system",
   "main": "cjs/index.js",
   "module": "es5/index.js",
