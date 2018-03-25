@@ -45,3 +45,7 @@ eventManager.emit('test', 'Hello!');
 // -> Yay, events work! Hello!
 // (The 'once' handler isn't fired)
 ```
+
+## Plugins
+
+### [For Vue.js](https://github.com/kaskar2008/vue-simple-events)
