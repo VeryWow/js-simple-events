@@ -41,23 +41,18 @@ export default class EventManagment {
   emit(eventName: string, ...args): void {
     if (this.eventHandlersMap[eventName]) {
       this.eventHandlersMap[eventName].forEach((value: boolean, handler: Function) => {
-        handler(...args);
+        value && handler(...args);
       });
     }
   }
 
   /// Aliases:
-  $emit = this.emit
   fire = this.emit
 
-  $on = this.on
   listen = this.on
   subscribe = this.on
 
-  $off = this.off
   remove = this.off
   unsubscribe = this.off
-
-  $once = this.once
   ///
 }

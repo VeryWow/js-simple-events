@@ -1,24 +1,35 @@
 var EventManagment = /** @class */ (function () {
     function EventManagment() {
         this.eventHandlersMap = {};
+        /// Aliases:
+        this.fire = this.emit;
+        this.listen = this.on;
+        this.subscribe = this.on;
+        this.remove = this.off;
+        this.unsubscribe = this.off;
+        ///
     }
-    EventManagment.prototype.addEventHandler = function (eventName, callback, options) {
+    EventManagment.prototype.addEventHandler = function (eventName, callback) {
         if (!this.eventHandlersMap[eventName]) {
             this.eventHandlersMap[eventName] = new Map();
         }
         if (!this.eventHandlersMap[eventName].has(callback)) {
-            this.eventHandlersMap[eventName].set(callback, options);
+            this.eventHandlersMap[eventName].set(callback, true);
         }
     };
     EventManagment.prototype.on = function (eventName, callback) {
-        this.addEventHandler(eventName, callback, {
-            once: false
-        });
+        this.addEventHandler(eventName, callback);
         return true;
     };
     EventManagment.prototype.once = function (eventName, callback) {
-        this.addEventHandler(eventName, callback, {
-            once: true
+        var _this = this;
+        this.addEventHandler(eventName, function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            callback.apply(void 0, args);
+            _this.off(eventName, callback);
         });
         return true;
     };
@@ -32,21 +43,13 @@ var EventManagment = /** @class */ (function () {
         return true;
     };
     EventManagment.prototype.emit = function (eventName) {
-        var _this = this;
         var args = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             args[_i - 1] = arguments[_i];
         }
-        var handlersToDelete = [];
         if (this.eventHandlersMap[eventName]) {
-            this.eventHandlersMap[eventName].forEach(function (options, handler) {
-                handler.apply(void 0, args);
-                if (options.once) {
-                    handlersToDelete.push(handler);
-                }
-            });
-            handlersToDelete.forEach(function (el) {
-                _this.eventHandlersMap[eventName].delete(el);
+            this.eventHandlersMap[eventName].forEach(function (value, handler) {
+                value && handler.apply(void 0, args);
             });
         }
     };
