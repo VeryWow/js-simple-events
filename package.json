@@ -1,0 +1,34 @@
+{
+  "name": "js-simple-events",
+  "version": "0.0.0",
+  "description": "Yet another simple event management system",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "postversion": "npm run build",
+    "patch": "npm version patch && npm publish",
+    "minor": "npm version minor && npm publish",
+    "major": "npm version major && npm publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kaskar2008/js-simple-events.git"
+  },
+  "keywords": [
+    "Simple",
+    "Events",
+    "JS",
+    "TS",
+    "Light",
+    "Management"
+  ],
+  "author": "kaskar2008",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kaskar2008/js-simple-events/issues"
+  },
+  "homepage": "https://github.com/kaskar2008/js-simple-events#readme",
+  "devDependencies": {
+    "typescript": "^2.7.2"
+  }
+}
