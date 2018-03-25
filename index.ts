@@ -3,13 +3,13 @@ import { EventHandlers } from './types'
 export default class EventManagment {
   private eventHandlersMap: EventHandlers = {}
 
-  private addEventHandler(eventName: string, callback: Function) {
+  private addEventHandler(eventName: string, callback: Function, isOnce: boolean = false) {
     if (!this.eventHandlersMap[eventName]) {
       this.eventHandlersMap[eventName] = new Map();
     }
 
     if (callback && !this.eventHandlersMap[eventName].has(callback)) {
-      this.eventHandlersMap[eventName].set(callback, true);
+      this.eventHandlersMap[eventName].set(callback, isOnce);
     }
   }
 
@@ -19,11 +19,7 @@ export default class EventManagment {
   }
 
   once(eventName: string, callback: Function): boolean {
-    const toHandle = (...args) => {
-      callback(...args);
-      this.off(eventName, toHandle);
-    }
-    this.addEventHandler(eventName, toHandle)
+    this.addEventHandler(eventName, callback, true)
     return true;
   }
 
@@ -42,7 +38,10 @@ export default class EventManagment {
   emit(eventName: string, ...args): void {
     if (this.eventHandlersMap[eventName]) {
       this.eventHandlersMap[eventName].forEach((value: boolean, handler: Function) => {
-        value && handler && handler(...args);
+        handler && handler(...args);
+        if (value) {
+          this.off(eventName, handler)
+        }
       });
     }
   }
