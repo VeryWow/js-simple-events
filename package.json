@@ -4,6 +4,7 @@
   "description": "Yet another simple event management system",
   "main": "cjs/index.js",
   "module": "es5/index.js",
+  "types": "types",
   "scripts": {
     "build-cjs": "tsc --p ./tsconfig.cjs.json",
     "build-es5": "tsc --p ./tsconfig.es5.json",
