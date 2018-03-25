@@ -19,10 +19,11 @@ export default class EventManagment {
   }
 
   once(eventName: string, callback: Function): boolean {
-    this.addEventHandler(eventName, (...args) => {
+    const toHandle = (...args) => {
       callback(...args);
-      this.off(eventName, callback);
-    })
+      this.off(eventName, toHandle);
+    }
+    this.addEventHandler(eventName, toHandle)
     return true;
   }
 
