@@ -13,7 +13,7 @@ var EventManagment = /** @class */ (function () {
         if (!this.eventHandlersMap[eventName]) {
             this.eventHandlersMap[eventName] = new Map();
         }
-        if (!this.eventHandlersMap[eventName].has(callback)) {
+        if (callback && !this.eventHandlersMap[eventName].has(callback)) {
             this.eventHandlersMap[eventName].set(callback, true);
         }
     };
@@ -37,7 +37,7 @@ var EventManagment = /** @class */ (function () {
         if (!this.eventHandlersMap[eventName]) {
             return true;
         }
-        if (this.eventHandlersMap[eventName].has(callback)) {
+        if (callback && this.eventHandlersMap[eventName].has(callback)) {
             return this.eventHandlersMap[eventName].delete(callback);
         }
         return true;
@@ -49,7 +49,7 @@ var EventManagment = /** @class */ (function () {
         }
         if (this.eventHandlersMap[eventName]) {
             this.eventHandlersMap[eventName].forEach(function (value, handler) {
-                value && handler.apply(void 0, args);
+                value && handler && handler.apply(void 0, args);
             });
         }
     };
