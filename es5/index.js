@@ -9,12 +9,13 @@ var EventManagment = /** @class */ (function () {
         this.unsubscribe = this.off;
         ///
     }
-    EventManagment.prototype.addEventHandler = function (eventName, callback) {
+    EventManagment.prototype.addEventHandler = function (eventName, callback, isOnce) {
+        if (isOnce === void 0) { isOnce = false; }
         if (!this.eventHandlersMap[eventName]) {
             this.eventHandlersMap[eventName] = new Map();
         }
         if (callback && !this.eventHandlersMap[eventName].has(callback)) {
-            this.eventHandlersMap[eventName].set(callback, true);
+            this.eventHandlersMap[eventName].set(callback, isOnce);
         }
     };
     EventManagment.prototype.on = function (eventName, callback) {
@@ -22,16 +23,7 @@ var EventManagment = /** @class */ (function () {
         return true;
     };
     EventManagment.prototype.once = function (eventName, callback) {
-        var _this = this;
-        var toHandle = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-            }
-            callback.apply(void 0, args);
-            _this.off(eventName, toHandle);
-        };
-        this.addEventHandler(eventName, toHandle);
+        this.addEventHandler(eventName, callback, true);
         return true;
     };
     EventManagment.prototype.off = function (eventName, callback) {
@@ -44,13 +36,17 @@ var EventManagment = /** @class */ (function () {
         return true;
     };
     EventManagment.prototype.emit = function (eventName) {
+        var _this = this;
         var args = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             args[_i - 1] = arguments[_i];
         }
         if (this.eventHandlersMap[eventName]) {
             this.eventHandlersMap[eventName].forEach(function (value, handler) {
-                value && handler && handler.apply(void 0, args);
+                handler && handler.apply(void 0, args);
+                if (value) {
+                    _this.off(eventName, handler);
+                }
             });
         }
     };
