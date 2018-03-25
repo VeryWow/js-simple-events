@@ -1,30 +1,27 @@
-type eventHandlerOptions = {
-  once: boolean
-}
+import { EventHandlers } from './types'
 
 export default class EventManagment {
-  private eventHandlersMap: { [key: string]: Map<Function, eventHandlerOptions> } = {}
+  private eventHandlersMap: EventHandlers = {}
 
-  private addEventHandler(eventName: string, callback: Function, options: eventHandlerOptions) {
+  private addEventHandler(eventName: string, callback: Function) {
     if (!this.eventHandlersMap[eventName]) {
       this.eventHandlersMap[eventName] = new Map();
     }
 
     if (!this.eventHandlersMap[eventName].has(callback)) {
-      this.eventHandlersMap[eventName].set(callback, options);
+      this.eventHandlersMap[eventName].set(callback, true);
     }
   }
 
   on(eventName: string, callback: Function): boolean {
-    this.addEventHandler(eventName, callback, {
-      once: false
-    })
+    this.addEventHandler(eventName, callback)
     return true;
   }
 
   once(eventName: string, callback: Function): boolean {
-    this.addEventHandler(eventName, callback, {
-      once: true
+    this.addEventHandler(eventName, (...args) => {
+      callback(...args);
+      this.off(eventName, callback);
     })
     return true;
   }
@@ -42,17 +39,25 @@ export default class EventManagment {
   }
 
   emit(eventName: string, ...args): void {
-    let handlersToDelete: Function[] = [];
     if (this.eventHandlersMap[eventName]) {
-      this.eventHandlersMap[eventName].forEach((options: eventHandlerOptions, handler: Function) => {
+      this.eventHandlersMap[eventName].forEach((value: boolean, handler: Function) => {
         handler(...args);
-        if (options.once) {
-          handlersToDelete.push(handler);
-        }
       });
-      handlersToDelete.forEach(el => {
-        this.eventHandlersMap[eventName].delete(el);
-      })
     }
   }
+
+  /// Aliases:
+  $emit = this.emit
+  fire = this.emit
+
+  $on = this.on
+  listen = this.on
+  subscribe = this.on
+
+  $off = this.off
+  remove = this.off
+  unsubscribe = this.off
+
+  $once = this.once
+  ///
 }
