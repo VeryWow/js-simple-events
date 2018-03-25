@@ -8,7 +8,7 @@ export default class EventManagment {
       this.eventHandlersMap[eventName] = new Map();
     }
 
-    if (!this.eventHandlersMap[eventName].has(callback)) {
+    if (callback && !this.eventHandlersMap[eventName].has(callback)) {
       this.eventHandlersMap[eventName].set(callback, true);
     }
   }
@@ -31,7 +31,7 @@ export default class EventManagment {
       return true;
     }
 
-    if (this.eventHandlersMap[eventName].has(callback)) {
+    if (callback && this.eventHandlersMap[eventName].has(callback)) {
       return this.eventHandlersMap[eventName].delete(callback);
     }
 
@@ -41,7 +41,7 @@ export default class EventManagment {
   emit(eventName: string, ...args): void {
     if (this.eventHandlersMap[eventName]) {
       this.eventHandlersMap[eventName].forEach((value: boolean, handler: Function) => {
-        value && handler(...args);
+        value && handler && handler(...args);
       });
     }
   }
