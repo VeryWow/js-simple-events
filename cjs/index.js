@@ -25,14 +25,15 @@ var EventManagment = /** @class */ (function () {
     };
     EventManagment.prototype.once = function (eventName, callback) {
         var _this = this;
-        this.addEventHandler(eventName, function () {
+        var toHandle = function () {
             var args = [];
             for (var _i = 0; _i < arguments.length; _i++) {
                 args[_i] = arguments[_i];
             }
             callback.apply(void 0, args);
-            _this.off(eventName, callback);
-        });
+            _this.off(eventName, toHandle);
+        };
+        this.addEventHandler(eventName, toHandle);
         return true;
     };
     EventManagment.prototype.off = function (eventName, callback) {
