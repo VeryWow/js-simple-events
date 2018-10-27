@@ -15,26 +15,27 @@ export default class EventManagment {
     }
   }
 
-  public on(eventName: string, callback: Function): boolean {
+  public on(eventName: string, callback: Function): EventManagment {
     this.addEventHandler(eventName, callback)
-    return true;
+    return this;
   }
 
-  public once(eventName: string, callback: Function): boolean {
+  public once(eventName: string, callback: Function): EventManagment {
     this.addEventHandler(eventName, callback, true)
-    return true;
+    return this;
   }
 
-  public off(eventName: string, callback: Function): boolean {
+  public off(eventName: string, callback: Function): EventManagment {
     if (!this.eventHandlersMap[eventName]) {
-      return true;
+      return this;
     }
 
     if (callback && this.eventHandlersMap[eventName].has(callback)) {
-      return this.eventHandlersMap[eventName].delete(callback);
+      this.eventHandlersMap[eventName].delete(callback);
+      return this;
     }
 
-    return true;
+    return this;
   }
 
   public emit(eventName: string, ...args): void {
