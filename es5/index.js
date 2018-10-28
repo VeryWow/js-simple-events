@@ -20,20 +20,21 @@ var EventManagment = /** @class */ (function () {
     };
     EventManagment.prototype.on = function (eventName, callback) {
         this.addEventHandler(eventName, callback);
-        return true;
+        return this;
     };
     EventManagment.prototype.once = function (eventName, callback) {
         this.addEventHandler(eventName, callback, true);
-        return true;
+        return this;
     };
     EventManagment.prototype.off = function (eventName, callback) {
         if (!this.eventHandlersMap[eventName]) {
-            return true;
+            return this;
         }
         if (callback && this.eventHandlersMap[eventName].has(callback)) {
-            return this.eventHandlersMap[eventName].delete(callback);
+            this.eventHandlersMap[eventName].delete(callback);
+            return this;
         }
-        return true;
+        return this;
     };
     EventManagment.prototype.emit = function (eventName) {
         var _this = this;
