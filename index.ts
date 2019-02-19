@@ -80,21 +80,21 @@ type FunctionalKeys<T extends object> = {
   [key in keyof T]: T[key] extends Function ? key : never;
 }[keyof T];
 
-function on<
+export function on<
   T extends new (...args: any[]) => any,
   Name extends FunctionalKeys<InstanceType<T>> = FunctionalKeys<InstanceType<T>>
 >(target: T, name: Name, options?: EventDecoratorOptions): MethodDecorator;
 
-function on<
+export function on<
   T extends object,
   Name extends FunctionalKeys<T> = FunctionalKeys<T>
 >(target: T, name: Name, options?: EventDecoratorOptions): MethodDecorator;
 
-function on<
+export function on<
   T extends EventManager
 >(target: T, name: T extends EventManager<infer U> ? U : FunctionalKeys<T>): MethodDecorator;
 
-function on<
+export function on<
   T extends new (...args: any[]) => any,
   Name extends FunctionalKeys<InstanceType<T>> = FunctionalKeys<InstanceType<T>>
 >(
