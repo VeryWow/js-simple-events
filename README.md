@@ -68,15 +68,11 @@ Examples:
 ```ts
 import EventManager, { on } from 'js-simple-events'
 
-class Other {
+class Other extends EventManager {
   test(callback) {
     console.log('test');
 
     setTimeout(callback, 1000);
-  }
-
-  emitTest() {
-    this.emit('test');
   }
 
   testPromiseResolve() {
@@ -107,13 +103,18 @@ class Test {
   }
 
   @on(Other, 'testPromiseResolve', { placement: 'promise' })
-  onTest() {
+  onTestResolve() {
     console.log('Other.testPromiseResolve is settled', Array.from(arguments))
   }
 
   @on(Other, 'testPromiseReject', { placement: 'promise' })
-  onTest() {
+  onTestReject() {
     console.log('Other.testPromiseReject is settled', Array.from(arguments))
+  }
+
+  @on(other, 'testEmit')
+  onTestEvent() {
+    console.log('"test" event handler called')
   }
 }
 
@@ -126,4 +127,7 @@ other.test(() => console.log('after you'));
 // *1 second pause*
 // => Other.test callback is called >[]
 // => after you
+
+other.emit('test');
+// => "test" event handler called
 ```
