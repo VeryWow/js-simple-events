@@ -45,3 +45,17 @@ eventManager.emit('test', 'Hello!');
 // -> Yay, events work! Hello!
 // (The 'once' handler isn't fired)
 ```
+
+## Typed events
+
+Additionally, it's possible to define types for event names using TypeScript and generics:
+
+```ts
+import EventManager from 'js-simple-events'
+
+type MyEvents = 'click' | 'hover';
+
+const eventManager = new EventManager<MyEvents>();
+
+eventManager.emit('click') // event name now autocompletes as either 'click' or 'hover'
+```
