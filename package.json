@@ -33,6 +33,6 @@
   },
   "homepage": "https://github.com/kaskar2008/js-simple-events#readme",
   "devDependencies": {
-    "typescript": "^2.7.2"
+    "typescript": "^2.9.2"
   }
 }
