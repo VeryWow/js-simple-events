@@ -1,21 +1,21 @@
 import { EventHandlers } from './types'
 
-export interface IEventMananger {
-  on(eventName: string, callback: Function): boolean;
-  listen(eventName: string, callback: Function): boolean;
-  subscribe(eventName: string, callback: Function): boolean;
+export interface IEventMananger<EventNames extends string = string> {
+  on(eventName: EventNames, callback: Function): boolean;
+  listen(eventName: EventNames, callback: Function): boolean;
+  subscribe(eventName: EventNames, callback: Function): boolean;
 
-  once(eventName: string, callback: Function): boolean;
+  once(eventName: EventNames, callback: Function): boolean;
 
-  off(eventName: string, callback: Function): boolean;
-  remove(eventName: string, callback: Function): boolean;
-  unsubscribe(eventName: string, callback: Function): boolean;
+  off(eventName: EventNames, callback: Function): boolean;
+  remove(eventName: EventNames, callback: Function): boolean;
+  unsubscribe(eventName: EventNames, callback: Function): boolean;
 
-  emit(eventName: string, ...args: any[]): void;
-  fire(eventName: string, ...args: any[]): void;
+  emit(eventName: EventNames, ...args: any[]): void;
+  fire(eventName: EventNames, ...args: any[]): void;
 }
 
-export default class EventManagement<EventNames extends string = string> implements IEventMananger {
+export default class EventManager<EventNames extends string = string> implements IEventMananger<EventNames> {
   private eventHandlersMap: EventHandlers = {}
 
   private addEventHandler(eventName: EventNames, callback: Function) {
