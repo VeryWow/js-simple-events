@@ -36,7 +36,7 @@ export default class EventManager<EventNames extends string = string> implements
   }
 
   public once(eventName: EventNames, callback: Function): boolean {
-    this.addEventHandler(eventName, (...args: any) => {
+    this.addEventHandler(eventName, (...args: any[]) => {
       callback(...args);
       this.off(eventName, callback);
     })
@@ -56,7 +56,7 @@ export default class EventManager<EventNames extends string = string> implements
     return this;
   }
 
-  public emit(eventName: EventNames, ...args): void {
+  public emit(eventName: EventNames, ...args: any[]): void {
     if (this.eventHandlersMap[eventName]) {
       this.eventHandlersMap[eventName].forEach((value: boolean, handler: Function) => {
         handler && handler(...args);
