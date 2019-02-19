@@ -1,15 +1,17 @@
-import { EventHandlers } from './types'
+export interface EventHandlers {
+  [key: string]: Map<Function, boolean>
+}
 
 export interface IEventMananger<EventNames extends string = string> {
-  on(eventName: EventNames, callback: Function): boolean;
-  listen(eventName: EventNames, callback: Function): boolean;
-  subscribe(eventName: EventNames, callback: Function): boolean;
+  on(eventName: EventNames, callback: Function): EventManager;
+  listen(eventName: EventNames, callback: Function): EventManager;
+  subscribe(eventName: EventNames, callback: Function): EventManager;
 
   once(eventName: EventNames, callback: Function): boolean;
 
-  off(eventName: EventNames, callback: Function): boolean;
-  remove(eventName: EventNames, callback: Function): boolean;
-  unsubscribe(eventName: EventNames, callback: Function): boolean;
+  off(eventName: EventNames, callback: Function): EventManager;
+  remove(eventName: EventNames, callback: Function): EventManager;
+  unsubscribe(eventName: EventNames, callback: Function): EventManager;
 
   emit(eventName: EventNames, ...args: any[]): void;
   fire(eventName: EventNames, ...args: any[]): void;
@@ -18,22 +20,22 @@ export interface IEventMananger<EventNames extends string = string> {
 export default class EventManager<EventNames extends string = string> implements IEventMananger<EventNames> {
   private eventHandlersMap: EventHandlers = {}
 
-  private addEventHandler(eventName: EventNames, callback: Function) {
+  private addEventHandler(eventName: EventNames, callback: Function, isOnce: boolean = false) {
     if (!this.eventHandlersMap[eventName]) {
       this.eventHandlersMap[eventName] = new Map();
     }
 
-    if (!this.eventHandlersMap[eventName].has(callback)) {
-      this.eventHandlersMap[eventName].set(callback, true);
+    if (callback && !this.eventHandlersMap[eventName].has(callback)) {
+      this.eventHandlersMap[eventName].set(callback, isOnce);
     }
   }
 
-  on(eventName: EventNames, callback: Function): boolean {
+  public on(eventName: EventNames, callback: Function): EventManager {
     this.addEventHandler(eventName, callback)
-    return true;
+    return this;
   }
 
-  once(eventName: EventNames, callback: Function): boolean {
+  public once(eventName: EventNames, callback: Function): boolean {
     this.addEventHandler(eventName, (...args: any) => {
       callback(...args);
       this.off(eventName, callback);
@@ -41,34 +43,38 @@ export default class EventManager<EventNames extends string = string> implements
     return true;
   }
 
-  off(eventName: EventNames, callback: Function): boolean {
+  public off(eventName: EventNames, callback: Function): EventManager {
     if (!this.eventHandlersMap[eventName]) {
-      return true;
+      return this;
     }
 
-    if (this.eventHandlersMap[eventName].has(callback)) {
-      return this.eventHandlersMap[eventName].delete(callback);
+    if (callback && this.eventHandlersMap[eventName].has(callback)) {
+      this.eventHandlersMap[eventName].delete(callback);
+      return this;
     }
 
-    return true;
+    return this;
   }
 
-  emit(eventName: EventNames, ...args: any[]): void {
+  public emit(eventName: EventNames, ...args): void {
     if (this.eventHandlersMap[eventName]) {
       this.eventHandlersMap[eventName].forEach((value: boolean, handler: Function) => {
-        value && handler(...args);
+        handler && handler(...args);
+        if (value) {
+          this.off(eventName, handler)
+        }
       });
     }
   }
 
   /// Aliases:
-  fire = this.emit
+  public fire = this.emit
 
-  listen = this.on
-  subscribe = this.on
+  public listen = this.on
+  public subscribe = this.on
 
-  remove = this.off
-  unsubscribe = this.off
+  public remove = this.off
+  public unsubscribe = this.off
   ///
 }
 

@@ -131,3 +131,9 @@ other.test(() => console.log('after you'));
 other.emit('test');
 // => "test" event handler called
 ```
+
+---
+
+## Plugins
+
+### [For Vue.js](https://github.com/kaskar2008/vue-simple-events)

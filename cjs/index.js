@@ -11,47 +11,45 @@ var EventManagment = /** @class */ (function () {
         this.unsubscribe = this.off;
         ///
     }
-    EventManagment.prototype.addEventHandler = function (eventName, callback) {
+    EventManagment.prototype.addEventHandler = function (eventName, callback, isOnce) {
+        if (isOnce === void 0) { isOnce = false; }
         if (!this.eventHandlersMap[eventName]) {
             this.eventHandlersMap[eventName] = new Map();
         }
-        if (!this.eventHandlersMap[eventName].has(callback)) {
-            this.eventHandlersMap[eventName].set(callback, true);
+        if (callback && !this.eventHandlersMap[eventName].has(callback)) {
+            this.eventHandlersMap[eventName].set(callback, isOnce);
         }
     };
     EventManagment.prototype.on = function (eventName, callback) {
         this.addEventHandler(eventName, callback);
-        return true;
+        return this;
     };
     EventManagment.prototype.once = function (eventName, callback) {
-        var _this = this;
-        this.addEventHandler(eventName, function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-            }
-            callback.apply(void 0, args);
-            _this.off(eventName, callback);
-        });
-        return true;
+        this.addEventHandler(eventName, callback, true);
+        return this;
     };
     EventManagment.prototype.off = function (eventName, callback) {
         if (!this.eventHandlersMap[eventName]) {
-            return true;
+            return this;
         }
-        if (this.eventHandlersMap[eventName].has(callback)) {
-            return this.eventHandlersMap[eventName].delete(callback);
+        if (callback && this.eventHandlersMap[eventName].has(callback)) {
+            this.eventHandlersMap[eventName].delete(callback);
+            return this;
         }
-        return true;
+        return this;
     };
     EventManagment.prototype.emit = function (eventName) {
+        var _this = this;
         var args = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             args[_i - 1] = arguments[_i];
         }
         if (this.eventHandlersMap[eventName]) {
             this.eventHandlersMap[eventName].forEach(function (value, handler) {
-                value && handler.apply(void 0, args);
+                handler && handler.apply(void 0, args);
+                if (value) {
+                    _this.off(eventName, handler);
+                }
             });
         }
     };
