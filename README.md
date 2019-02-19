@@ -59,3 +59,71 @@ const eventManager = new EventManager<MyEvents>();
 
 eventManager.emit('click') // event name now autocompletes as either 'click' or 'hover'
 ```
+
+## `@on` decorator
+
+This library also includes a handy `@on` decorator, that allows to bind methods of your class as listeners to `EventManager` events or method calls of any object or class!
+
+Examples:
+```ts
+import EventManager, { on } from 'js-simple-events'
+
+class Other {
+  test(callback) {
+    console.log('test');
+
+    setTimeout(callback, 1000);
+  }
+
+  emitTest() {
+    this.emit('test');
+  }
+
+  testPromiseResolve() {
+    return Promise.resolve('test');
+  }
+
+  testPromiseReject() {
+    return Promise.reject('test');
+  }
+}
+
+const other = new Other();
+
+class Test {
+  @on(Other, 'test')
+  onBeforeTest() {
+    console.log('Other.test is called', Array.from(arguments))
+  }
+
+  @on(Other, 'test', { placement: 'after' })
+  onAfterTest() {
+    console.log('Other.test was called', Array.from(arguments))
+  }
+
+  @on(Other, 'test', { placement: 'callback' })
+  cbTest() {
+    console.log('Other.test callback is called', Array.from(arguments))
+  }
+
+  @on(Other, 'testPromiseResolve', { placement: 'promise' })
+  onTest() {
+    console.log('Other.testPromiseResolve is settled', Array.from(arguments))
+  }
+
+  @on(Other, 'testPromiseReject', { placement: 'promise' })
+  onTest() {
+    console.log('Other.testPromiseReject is settled', Array.from(arguments))
+  }
+}
+
+const test = new Test();
+
+other.test(() => console.log('after you'));
+// => Other.test is called >[ƒ]
+// => test
+// => Other.test was called >[ƒ]
+// *1 second pause*
+// => Other.test callback is called >[]
+// => after you
+```

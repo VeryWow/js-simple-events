@@ -2,9 +2,14 @@
   "compilerOptions": {
     "noEmit": true,
     "lib": [
+      "dom",
       "es5",
-      "es2015"
+      "es2015",
+      "es2018.promise"
     ],
-    "types": ["./types"]
+    "types": ["./types"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "target": "es5"
   }
 }
