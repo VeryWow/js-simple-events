@@ -46,6 +46,94 @@ eventManager.emit('test', 'Hello!');
 // (The 'once' handler isn't fired)
 ```
 
+## Typed events
+
+Additionally, it's possible to define types for event names using TypeScript and generics:
+
+```ts
+import EventManager from 'js-simple-events'
+
+type MyEvents = 'click' | 'hover';
+
+const eventManager = new EventManager<MyEvents>();
+
+eventManager.emit('click') // event name now autocompletes as either 'click' or 'hover'
+```
+
+## `@on` decorator
+
+This library also includes a handy `@on` decorator, that allows to bind methods of your class as listeners to `EventManager` events or method calls of any object or class!
+
+Examples:
+```ts
+import EventManager, { on } from 'js-simple-events'
+
+class Other extends EventManager {
+  test(callback) {
+    console.log('test');
+
+    setTimeout(callback, 1000);
+  }
+
+  testPromiseResolve() {
+    return Promise.resolve('test');
+  }
+
+  testPromiseReject() {
+    return Promise.reject('test');
+  }
+}
+
+const other = new Other();
+
+class Test {
+  @on(Other, 'test')
+  onBeforeTest() {
+    console.log('Other.test is called', Array.from(arguments))
+  }
+
+  @on(Other, 'test', { placement: 'after' })
+  onAfterTest() {
+    console.log('Other.test was called', Array.from(arguments))
+  }
+
+  @on(Other, 'test', { placement: 'callback' })
+  cbTest() {
+    console.log('Other.test callback is called', Array.from(arguments))
+  }
+
+  @on(Other, 'testPromiseResolve', { placement: 'promise' })
+  onTestResolve() {
+    console.log('Other.testPromiseResolve is settled', Array.from(arguments))
+  }
+
+  @on(Other, 'testPromiseReject', { placement: 'promise' })
+  onTestReject() {
+    console.log('Other.testPromiseReject is settled', Array.from(arguments))
+  }
+
+  @on(other, 'test')
+  onTestEvent() {
+    console.log('"test" event handler called')
+  }
+}
+
+const test = new Test();
+
+other.test(() => console.log('after you'));
+// => Other.test is called >[ƒ]
+// => test
+// => Other.test was called >[ƒ]
+// *1 second pause*
+// => Other.test callback is called >[]
+// => after you
+
+other.emit('test');
+// => "test" event handler called
+```
+
+---
+
 ## Plugins
 
 ### [For Vue.js](https://github.com/kaskar2008/vue-simple-events)
