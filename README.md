@@ -112,7 +112,7 @@ class Test {
     console.log('Other.testPromiseReject is settled', Array.from(arguments))
   }
 
-  @on(other, 'testEmit')
+  @on(other, 'test')
   onTestEvent() {
     console.log('"test" event handler called')
   }
