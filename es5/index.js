@@ -10,12 +10,22 @@ var EventManagment = /** @class */ (function () {
         ///
     }
     EventManagment.prototype.addEventHandler = function (eventName, callback, isOnce) {
+        var _this = this;
         if (isOnce === void 0) { isOnce = false; }
-        if (!this.eventHandlersMap[eventName]) {
-            this.eventHandlersMap[eventName] = new Map();
+        if (eventName instanceof RegExp) {
+            Object.keys(this.eventHandlersMap).forEach(function (el) {
+                if (el.match(eventName) && callback && !_this.eventHandlersMap[el].has(callback)) {
+                    _this.eventHandlersMap[el].set(callback, isOnce);
+                }
+            });
         }
-        if (callback && !this.eventHandlersMap[eventName].has(callback)) {
-            this.eventHandlersMap[eventName].set(callback, isOnce);
+        else {
+            if (!this.eventHandlersMap[eventName]) {
+                this.eventHandlersMap[eventName] = new Map();
+            }
+            if (callback && !this.eventHandlersMap[eventName].has(callback)) {
+                this.eventHandlersMap[eventName].set(callback, isOnce);
+            }
         }
     };
     EventManagment.prototype.on = function (eventName, callback) {
@@ -27,12 +37,22 @@ var EventManagment = /** @class */ (function () {
         return this;
     };
     EventManagment.prototype.off = function (eventName, callback) {
-        if (!this.eventHandlersMap[eventName]) {
-            return this;
+        var _this = this;
+        if (eventName instanceof RegExp) {
+            Object.keys(this.eventHandlersMap).forEach(function (el) {
+                if (el.match(eventName) && callback && !_this.eventHandlersMap[el].has(callback)) {
+                    _this.eventHandlersMap[el].delete(callback);
+                }
+            });
         }
-        if (callback && this.eventHandlersMap[eventName].has(callback)) {
-            this.eventHandlersMap[eventName].delete(callback);
-            return this;
+        else {
+            if (!this.eventHandlersMap[eventName]) {
+                return this;
+            }
+            if (callback && this.eventHandlersMap[eventName].has(callback)) {
+                this.eventHandlersMap[eventName].delete(callback);
+                return this;
+            }
         }
         return this;
     };
