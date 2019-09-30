@@ -4,6 +4,7 @@ export interface EventHandlers {
 
 export default class EventManagment {
   private eventHandlersMap: EventHandlers = {}
+  private isDebug: boolean = false;
 
   private addEventHandler(eventName: string | RegExp, callback: Function, isOnce: boolean = false) {
     if (eventName instanceof RegExp) {
@@ -21,6 +22,10 @@ export default class EventManagment {
         this.eventHandlersMap[eventName].set(callback, isOnce);
       }
     }
+  }
+
+  public setDebug(isDebug: boolean) {
+    this.isDebug = isDebug;
   }
 
   public on(eventName: string | RegExp, callback: Function): EventManagment {
@@ -55,10 +60,14 @@ export default class EventManagment {
   }
 
   public emit(eventName: string, ...args): void {
+    if (this.isDebug) {
+      console.info(`[EventManagment]: Fires ${eventName}`, this);
+    }
+
     if (this.eventHandlersMap[eventName]) {
-      this.eventHandlersMap[eventName].forEach((value: boolean, handler: Function) => {
-        handler && handler(...args);
-        if (value) {
+      this.eventHandlersMap[eventName].forEach((isOnce: boolean, handler: Function) => {
+        handler && handler(...args, { eventName, isOnce });
+        if (isOnce) {
           this.off(eventName, handler)
         }
       });
