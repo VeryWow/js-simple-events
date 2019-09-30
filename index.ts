@@ -61,7 +61,7 @@ export default class EventManagment {
 
   public emit(eventName: string, ...args): void {
     if (this.isDebug) {
-      console.info(`[EventManagment]: Fires ${eventName}`, this);
+      console.info(`[${this.constructor.name}]: Fires ${eventName}`);
     }
 
     if (this.eventHandlersMap[eventName]) {
