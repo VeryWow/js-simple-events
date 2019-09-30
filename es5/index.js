@@ -1,6 +1,7 @@
 var EventManagment = /** @class */ (function () {
     function EventManagment() {
         this.eventHandlersMap = {};
+        this.isDebug = false;
         /// Aliases:
         this.fire = this.emit;
         this.listen = this.on;
@@ -27,6 +28,9 @@ var EventManagment = /** @class */ (function () {
                 this.eventHandlersMap[eventName].set(callback, isOnce);
             }
         }
+    };
+    EventManagment.prototype.setDebug = function (isDebug) {
+        this.isDebug = isDebug;
     };
     EventManagment.prototype.on = function (eventName, callback) {
         this.addEventHandler(eventName, callback);
@@ -62,10 +66,13 @@ var EventManagment = /** @class */ (function () {
         for (var _i = 1; _i < arguments.length; _i++) {
             args[_i - 1] = arguments[_i];
         }
+        if (this.isDebug) {
+            console.info("[EventManagment]: Fires " + eventName, this);
+        }
         if (this.eventHandlersMap[eventName]) {
-            this.eventHandlersMap[eventName].forEach(function (value, handler) {
-                handler && handler.apply(void 0, args);
-                if (value) {
+            this.eventHandlersMap[eventName].forEach(function (isOnce, handler) {
+                handler && handler.apply(void 0, args.concat([{ eventName: eventName, isOnce: isOnce }]));
+                if (isOnce) {
                     _this.off(eventName, handler);
                 }
             });
