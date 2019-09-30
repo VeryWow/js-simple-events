@@ -69,7 +69,7 @@ var EventManagment = /** @class */ (function () {
             args[_i - 1] = arguments[_i];
         }
         if (this.isDebug) {
-            console.info("[EventManagment]: Fires " + eventName, this);
+            console.info("[" + this.constructor.name + "]: Fires " + eventName);
         }
         if (this.eventHandlersMap[eventName]) {
             this.eventHandlersMap[eventName].forEach(function (isOnce, handler) {
