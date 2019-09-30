@@ -19,7 +19,7 @@ export default class EventManagment {
     }
   }
 
-  private callHandlers(eventName: string, ...args: any) {
+  private callHandlers(eventName: string, ...args: any[]) {
     if (this.eventHandlersMap[eventName]) {
       this.eventHandlersMap[eventName].forEach((isOnce: boolean, handler: Function) => {
         handler && handler(...args, { eventName, isOnce });
@@ -57,7 +57,7 @@ export default class EventManagment {
     return this;
   }
 
-  public emit(eventName: string, ...args: any): void {
+  public emit(eventName: string, ...args: any[]): void {
     if (this.isDebug) {
       console.info(`[${this.constructor.name}]: Fires ${eventName}`);
     }
