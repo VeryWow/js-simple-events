@@ -1,12 +1,12 @@
 
-export interface EventHandlers {
-  [key: string]: Map<Function, boolean>
+export interface IEventHandlers {
+  [key: string]: Map<Function, boolean>;
 }
 
 export default class EventManagment {
-  private eventHandlersMap: EventHandlers = {
-    '*': new Map()
-  }
+  private eventHandlersMap: IEventHandlers = {
+    '*': new Map(),
+  };
   private isDebug: boolean = false;
 
   private addEventHandler(eventName: string, callback: Function, isOnce: boolean = false) {
@@ -19,12 +19,12 @@ export default class EventManagment {
     }
   }
 
-  private callHandlers(eventName: string, ...args: any[]) {
-    if (this.eventHandlersMap[eventName]) {
-      this.eventHandlersMap[eventName].forEach((isOnce: boolean, handler: Function) => {
-        handler && handler(...args, { eventName, isOnce });
+  private callHandlers(eventName: string, payload: any, realEventName?: string) {
+    if (this.eventHandlersMap[eventName[0]]) {
+      this.eventHandlersMap[eventName[0]].forEach((isOnce: boolean, handler: Function) => {
+        handler && handler(payload, { eventName: realEventName, isOnce });
         if (isOnce) {
-          this.off(eventName, handler)
+          this.off(eventName[0], handler);
         }
       });
     }
@@ -32,16 +32,19 @@ export default class EventManagment {
 
   public setDebug(isDebug: boolean) {
     this.isDebug = isDebug;
+
     return this;
   }
 
   public on(eventName: string, callback: Function): EventManagment {
-    this.addEventHandler(eventName, callback)
+    this.addEventHandler(eventName, callback);
+
     return this;
   }
 
   public once(eventName: string, callback: Function): EventManagment {
-    this.addEventHandler(eventName, callback, true)
+    this.addEventHandler(eventName, callback, true);
+
     return this;
   }
 
@@ -57,22 +60,22 @@ export default class EventManagment {
     return this;
   }
 
-  public emit(eventName: string, ...args: any[]): void {
+  public emit(eventName: string, payload?: any): void {
     if (this.isDebug) {
       console.info(`[${this.constructor.name}]: Fires ${eventName}`);
     }
 
-    this.callHandlers('*', ...args);
-    this.callHandlers(eventName, ...args);
+    this.callHandlers('*', payload, eventName);
+    this.callHandlers(eventName, payload);
   }
 
   /// Aliases:
-  public fire = this.emit
+  public fire = this.emit;
 
-  public listen = this.on
-  public subscribe = this.on
+  public listen = this.on;
+  public subscribe = this.on;
 
-  public remove = this.off
-  public unsubscribe = this.off
+  public remove = this.off;
+  public unsubscribe = this.off;
   ///
 }
