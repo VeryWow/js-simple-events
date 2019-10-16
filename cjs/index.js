@@ -25,11 +25,11 @@ var EventManagment = /** @class */ (function () {
     };
     EventManagment.prototype.callHandlers = function (eventName, payload, realEventName) {
         var _this = this;
-        if (this.eventHandlersMap[eventName[0]]) {
-            this.eventHandlersMap[eventName[0]].forEach(function (isOnce, handler) {
-                handler && handler(payload, { eventName: realEventName, isOnce: isOnce });
+        if (this.eventHandlersMap[eventName]) {
+            this.eventHandlersMap[eventName].forEach(function (isOnce, handler) {
+                handler && handler(payload, { eventName: realEventName || eventName, isOnce: isOnce });
                 if (isOnce) {
-                    _this.off(eventName[0], handler);
+                    _this.off(eventName, handler);
                 }
             });
         }
