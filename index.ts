@@ -20,11 +20,11 @@ export default class EventManagment {
   }
 
   private callHandlers(eventName: string, payload: any, realEventName?: string) {
-    if (this.eventHandlersMap[eventName[0]]) {
-      this.eventHandlersMap[eventName[0]].forEach((isOnce: boolean, handler: Function) => {
-        handler && handler(payload, { eventName: realEventName, isOnce });
+    if (this.eventHandlersMap[eventName]) {
+      this.eventHandlersMap[eventName].forEach((isOnce: boolean, handler: Function) => {
+        handler && handler(payload, { eventName: realEventName || eventName, isOnce });
         if (isOnce) {
-          this.off(eventName[0], handler);
+          this.off(eventName, handler);
         }
       });
     }
