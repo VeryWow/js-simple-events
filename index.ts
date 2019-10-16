@@ -19,12 +19,7 @@ export default class EventManagment {
     }
   }
 
-  private callHandlers(event: string | string[], payload: any) {
-    // Temp patch with an array
-    // @TODO
-    const realEventName = Array.isArray(event) ? event[1] : event;
-    const eventName = Array.isArray(event) ? event[0] : event;
-
+  private callHandlers(eventName: string, payload: any, realEventName?: string) {
     if (this.eventHandlersMap[eventName[0]]) {
       this.eventHandlersMap[eventName[0]].forEach((isOnce: boolean, handler: Function) => {
         handler && handler(payload, { eventName: realEventName, isOnce });
@@ -70,7 +65,7 @@ export default class EventManagment {
       console.info(`[${this.constructor.name}]: Fires ${eventName}`);
     }
 
-    this.callHandlers(['*', eventName], payload);
+    this.callHandlers('*', payload, eventName);
     this.callHandlers(eventName, payload);
   }
 
