@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var EventManagment = /** @class */ (function () {
     function EventManagment() {
         this.eventHandlersMap = {
-            '*': new Map()
+            '*': new Map(),
         };
         this.isDebug = false;
         /// Aliases:
@@ -23,17 +23,13 @@ var EventManagment = /** @class */ (function () {
             this.eventHandlersMap[eventName].set(callback, isOnce);
         }
     };
-    EventManagment.prototype.callHandlers = function (eventName) {
+    EventManagment.prototype.callHandlers = function (eventName, payload, realEventName) {
         var _this = this;
-        var args = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            args[_i - 1] = arguments[_i];
-        }
-        if (this.eventHandlersMap[eventName]) {
-            this.eventHandlersMap[eventName].forEach(function (isOnce, handler) {
-                handler && handler.apply(void 0, args.concat([{ eventName: eventName, isOnce: isOnce }]));
+        if (this.eventHandlersMap[eventName[0]]) {
+            this.eventHandlersMap[eventName[0]].forEach(function (isOnce, handler) {
+                handler && handler(payload, { eventName: realEventName, isOnce: isOnce });
                 if (isOnce) {
-                    _this.off(eventName, handler);
+                    _this.off(eventName[0], handler);
                 }
             });
         }
@@ -59,16 +55,12 @@ var EventManagment = /** @class */ (function () {
         }
         return this;
     };
-    EventManagment.prototype.emit = function (eventName) {
-        var args = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            args[_i - 1] = arguments[_i];
-        }
+    EventManagment.prototype.emit = function (eventName, payload) {
         if (this.isDebug) {
             console.info("[" + this.constructor.name + "]: Fires " + eventName);
         }
-        this.callHandlers.apply(this, ['*'].concat(args));
-        this.callHandlers.apply(this, [eventName].concat(args));
+        this.callHandlers('*', payload, eventName);
+        this.callHandlers(eventName, payload);
     };
     return EventManagment;
 }());
