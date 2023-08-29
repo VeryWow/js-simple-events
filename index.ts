@@ -1,65 +1,105 @@
-
 export interface IEventHandlers {
-  [key: string]: Map<Function, boolean>;
+  [ key: string ]: Map<Function, boolean>;
 }
 
-export default class EventManagment {
+export default class EventManagement {
   private eventHandlersMap: IEventHandlers = {
     '*': new Map(),
   };
   private isDebug: boolean = false;
 
-  private addEventHandler(eventName: string, callback: Function, isOnce: boolean = false) {
-    if (!this.eventHandlersMap[eventName]) {
-      this.eventHandlersMap[eventName] = new Map();
+  // Private methods
+
+  /**
+   * Add an event handler.
+   *
+   * @private
+   * @param {string} eventName - Name of the event.
+   * @param {Function} callback - Callback function for the event.
+   * @param {boolean} [isOnce=false] - Whether the callback is fired only once.
+   */
+  private addEventHandler(eventName: string, callback: Function, isOnce: boolean = false): void {
+    if (!this.eventHandlersMap[ eventName ]) {
+      this.eventHandlersMap[ eventName ] = new Map();
     }
 
-    if (callback && !this.eventHandlersMap[eventName].has(callback)) {
-      this.eventHandlersMap[eventName].set(callback, isOnce);
+    if (!this.eventHandlersMap[ eventName ].has(callback)) {
+      this.eventHandlersMap[ eventName ].set(callback, isOnce);
     }
   }
 
-  private callHandlers(eventName: string, payload: any, realEventName?: string) {
-    if (this.eventHandlersMap[eventName]) {
-      this.eventHandlersMap[eventName].forEach((isOnce: boolean, handler: Function) => {
-        handler && handler(payload, { eventName: realEventName || eventName, isOnce });
-        if (isOnce) {
-          this.off(eventName, handler);
-        }
-      });
-    }
+  /**
+   * Call registered handlers for a specific event.
+   *
+   * @private
+   * @param {string} eventName - Name of the event.
+   * @param {any} payload - Data payload for the event.
+   * @param {string} [realEventName] - Real event name.
+   */
+  private callHandlers(eventName: string, payload: any, realEventName?: string): void {
+    this.eventHandlersMap[ eventName ]?.forEach((isOnce: boolean, handler: Function) => {
+      handler(payload, { eventName: realEventName || eventName, isOnce });
+      if (isOnce) {
+        this.off(eventName, handler);
+      }
+    });
   }
 
-  public setDebug(isDebug: boolean) {
+  // Public methods
+
+  /**
+   * Set debug mode for the event management.
+   *
+   * @param {boolean} isDebug - Whether to activate debug mode.
+   * @returns {EventManagement} - Returns the instance of EventManagement.
+   */
+  public setDebug(isDebug: boolean): this {
     this.isDebug = isDebug;
-
     return this;
   }
 
-  public on(eventName: string, callback: Function): EventManagment {
+  /**
+   * Register an event listener.
+   *
+   * @param {string} eventName - Name of the event.
+   * @param {Function} callback - Callback function for the event.
+   * @returns {EventManagement} - Returns the instance of EventManagement.
+   */
+  public on(eventName: string, callback: Function): this {
     this.addEventHandler(eventName, callback);
-
     return this;
   }
 
-  public once(eventName: string, callback: Function): EventManagment {
+  /**
+   * Register an event listener that listens only once.
+   *
+   * @param {string} eventName - Name of the event.
+   * @param {Function} callback - Callback function for the event.
+   * @returns {EventManagement} - Returns the instance of EventManagement.
+   */
+  public once(eventName: string, callback: Function): this {
     this.addEventHandler(eventName, callback, true);
-
     return this;
   }
 
-  public off(eventName: string, callback: Function): EventManagment {
-    if (!this.eventHandlersMap[eventName]) {
-      return this;
-    }
-
-    if (callback && this.eventHandlersMap[eventName].has(callback)) {
-      this.eventHandlersMap[eventName].delete(callback);
-    }
-
+  /**
+   * Remove an event listener.
+   *
+   * @param {string} eventName - Name of the event.
+   * @param {Function} callback - Callback function for the event.
+   * @returns {EventManagement} - Returns the instance of EventManagement.
+   */
+  public off(eventName: string, callback: Function): this {
+    this.eventHandlersMap[ eventName ]?.delete(callback);
     return this;
   }
 
+  /**
+   * Emit/fire an event.
+   *
+   * @param {string} eventName - Name of the event.
+   * @param {any} [payload] - Data payload for the event.
+   */
   public emit(eventName: string, payload?: any): void {
     if (this.isDebug) {
       console.info(`[${this.constructor.name}]: Fires ${eventName}`);
@@ -69,13 +109,24 @@ export default class EventManagment {
     this.callHandlers(eventName, payload);
   }
 
-  /// Aliases:
+  // Aliases
+
+  /** Alias for emit method. */
   public fire = this.emit;
 
+  /** Alias for on method. */
   public listen = this.on;
+
+  /** Alias for on method. */
   public subscribe = this.on;
 
+  /** Alias for off method. */
   public remove = this.off;
+
+  /** Alias for off method. */
   public unsubscribe = this.off;
-  ///
 }
+
+const eventManager = new EventManagement();
+
+export { eventManager };
