@@ -79,3 +79,7 @@ export default class EventManagment {
   public unsubscribe = this.off;
   ///
 }
+
+const eventManager = new EventManagment();
+
+export { eventManager };
