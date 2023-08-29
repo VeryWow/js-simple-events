@@ -127,6 +127,6 @@ export default class EventManagement {
   public unsubscribe = this.off;
 }
 
-const eventManagerInstance = new EventManagement();
+const eventManager = new EventManagement();
 
-export { eventManagerInstance };
+export { eventManager };
